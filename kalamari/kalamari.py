@@ -1,7 +1,8 @@
-from json import loads
-from .tree import Tree
-import re
 import os
+import re
+from json import loads
+
+from .tree import Tree
 
 
 class smartJSON:
@@ -16,13 +17,29 @@ class smartJSON:
                 self.json = Tree.tree_from_dict(loads(json))
 
     def __repr__(self):
-        result = {}
-        for node in self.json[1]:
-            if node.children:
-                result[node.data] = "{...}"
-            if node.container:
-                result[node.data] = "..."
+        try:
+            result = {}
+            for node in self.json[1]:
+                if node.children:
+                    result[node.data] = "{...}"
+                if node.container:
+                    result[node.data] = "..."
+        except KeyError:
+            pass
         return str(result)
+
+    def __iter__(self):
+        try:
+            for i in self.json[1]:
+                yield (i.data, i.get_value())
+        except KeyError:
+            pass
+
+    def __getitem__(self, key):
+        for i in self.json.tree[1]:
+            if i.data == key:
+                return i.get_value()
+        raise KeyError
 
     def get_attrs(self, *attrs):
         result = {i: [] for i in attrs}

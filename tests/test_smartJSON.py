@@ -1,5 +1,5 @@
-from kalamari import smartJSON
 import pytest
+from kalamari import smartJSON
 
 
 @pytest.fixture
@@ -111,3 +111,17 @@ def test_get_attrs_by_parent_w_simple_string(nested_json_one):
                     {'location': '5 Park Av, NY, NY 10010',
                         'email': 'alice@efgcompany.com',
                         'phone': '7564525797'}]}
+
+def test_empty_string():
+    empty_string = dict(smartJSON('""'))
+    assert  isinstance(empty_string, dict)
+
+def test_empty_object():
+    empty_object = dict(smartJSON('{}'))
+    assert isinstance(empty_object, dict) and not len(empty_object)
+
+def test_empty_string_as_value():
+    assert dict(smartJSON('{"a": ""}'))['a'] == ''
+
+def test_empty_object_as_value():
+    assert isinstance(dict(smartJSON('{"a": {}}'))['a'], dict)
